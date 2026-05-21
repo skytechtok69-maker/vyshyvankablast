@@ -3,28 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- Захист від примусового темного режиму в телефонах -->
-    <meta name="color-scheme" content="light">
-    <title>Етно Бласт 3.2 (Повне виправлення)</title>
+    <!-- Захист від темного режиму -->
+    <meta name="color-scheme" content="light only">
+    <title>Етно Бласт 3.3 (Фінал)</title>
     <style>
         :root {
-            --bg-linen: #f5f2eb !important;
-            --fabric-color: #fefdfb !important;
-            --ethno-red: #cc2323 !important;
-            --ethno-black: #1a1a1a !important;
-            --ethno-gold: #e09f1b !important;
-            --ethno-green: #2a6f43 !important;
-            --ethno-blue: #0d3b66 !important;
-            --grid-line: #e3dac9 !important;
-            --shadow: rgba(40, 30, 20, 0.12) !important;
-        }
-
-        /* Жорстке блокування інверсії кольорів на мобілках */
-        @media (prefers-color-scheme: dark) {
-            body, html, .game-container, .board-wrapper, .cell, .rack-slot {
-                background-color: transparent;
-                color: #1a1a1a;
-            }
+            --bg-color: #f5f2eb;
+            --fabric-color: #fefdfb;
+            --ethno-red: #cc2323;
+            --ethno-black: #1a1a1a;
+            --grid-line: #e3dac9;
         }
 
         * {
@@ -33,71 +21,63 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: none;
+            touch-action: none; /* Забороняє скрол екрану під час гри */
         }
 
-        body {
+        /* Обманюємо примусовий темний режим за допомогою фонових градієнтів */
+        html, body {
+            background-color: var(--bg-color) !important;
+            /* Градієнт блокує інверсію фону на телефонах */
+            background-image: linear-gradient(var(--bg-color), var(--bg-color)) !important; 
+            color: #1a1a1a !important;
             font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-linen) !important;
-            background-image: radial-gradient(var(--grid-line) 1.5px, transparent 1.5px) !important;
-            background-size: 24px 24px;
-            color: var(--ethno-black);
+            min-height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            min-height: 100vh;
-            padding: 10px;
-            overflow: hidden;
         }
 
-        .game-container {
+        .game-wrapper {
             width: 100%;
             max-width: 420px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
+            padding: 10px;
             position: relative;
+            z-index: 10;
+        }
+
+        /* Декоративна сітка на фоні */
+        .bg-pattern {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(#d5cebe 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            z-index: 1; pointer-events: none;
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--fabric-color) !important;
-            padding: 12px 16px;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px var(--shadow);
+            display: flex; justify-content: space-between; align-items: center;
+            background-image: linear-gradient(var(--fabric-color), var(--fabric-color)) !important;
+            padding: 12px 16px; border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             border-top: 4px solid var(--ethno-red);
             border-bottom: 4px solid var(--ethno-black);
         }
 
-        .title-area h1 {
-            font-size: 18px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--ethno-black);
-        }
-
-        .title-area span {
-            font-size: 11px;
-            color: var(--ethno-red);
-            font-weight: bold;
-        }
-
+        .title-area h1 { font-size: 18px; font-weight: 900; color: #1a1a1a !important; text-transform: uppercase; }
+        .title-area span { font-size: 11px; color: var(--ethno-red) !important; font-weight: bold; }
         .stats { display: flex; gap: 12px; }
         .stat-box { text-align: right; }
-        .stat-label { font-size: 9px; text-transform: uppercase; color: #777; font-weight: bold; }
-        .stat-val { font-size: 20px; font-weight: 800; color: var(--ethno-black); }
+        .stat-label { font-size: 9px; text-transform: uppercase; color: #555 !important; font-weight: bold; }
+        .stat-val { font-size: 20px; font-weight: 800; color: #1a1a1a !important; }
         #score { color: var(--ethno-red) !important; }
 
-        /* Ігрове поле */
-        .board-wrapper {
-            background: var(--fabric-color) !important;
-            padding: 8px;
-            border-radius: 20px;
-            box-shadow: 0 8px 24px var(--shadow);
+        .board-container {
+            background-image: linear-gradient(var(--fabric-color), var(--fabric-color)) !important;
+            padding: 8px; border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
             border: 1px solid var(--grid-line);
         }
 
@@ -105,178 +85,81 @@
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
-            gap: 4px;
-            width: 100%;
-            aspect-ratio: 1;
-            background-color: var(--grid-line) !important;
-            border-radius: 12px;
-            padding: 4px;
+            gap: 4px; width: 100%; aspect-ratio: 1;
+            background-image: linear-gradient(var(--grid-line), var(--grid-line)) !important;
+            border-radius: 12px; padding: 4px;
         }
 
         .cell {
-            background-color: var(--fabric-color) !important;
-            border-radius: 6px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background-image: linear-gradient(var(--fabric-color), var(--fabric-color)) !important;
+            border-radius: 6px; position: relative;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .cell::after {
-            content: "·";
-            color: #d0c8b8 !important;
-            font-size: 16px;
-        }
+        .cell::after { content: "·"; color: #d0c8b8 !important; font-size: 16px; }
         .cell.filled::after { content: "" !important; }
 
-        /* КУБИКИ ОРНАМЕНТІВ */
         .ornament {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            position: relative; display: flex; align-items: center; justify-content: center;
+            border-radius: 5px; width: 100%; height: 100%;
             box-shadow: inset 0 0 3px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.15);
-            border-radius: 5px;
-            width: 100%;
-            height: 100%;
         }
-
         .ornament::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 3px);
             z-index: 1;
         }
+        .ornament::after { position: relative; z-index: 2; font-size: 18px; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 
-        .ornament::after {
-            position: relative;
-            z-index: 2;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            font-size: 18px;
-            font-weight: normal;
-        }
+        .ornament-1 { background-image: linear-gradient(135deg, #1a1a1a, #333) !important; color: #ff4d4d !important; } .ornament-1::after { content: "✥"; }
+        .ornament-2 { background-image: linear-gradient(135deg, #e09f1b, #f3b63a) !important; color: #1e5230 !important; } .ornament-2::after { content: "✺"; }
+        .ornament-3 { background-image: linear-gradient(135deg, #cc2323, #a01616) !important; color: #ffd700 !important; } .ornament-3::after { content: "✤"; }
+        .ornament-4 { background-image: linear-gradient(135deg, #2a6f43, #3c925c) !important; color: #ffffff !important; } .ornament-4::after { content: "✣"; }
+        .ornament-5 { background-image: linear-gradient(135deg, #0d3b66, #1a5b99) !important; color: #f4d35e !important; } .ornament-5::after { content: "✸"; }
+        .ornament-6 { background-image: linear-gradient(135deg, #faf0ca, #fcebb6) !important; color: #d62828 !important; } .ornament-6::after { content: "✿"; }
 
-        @media(max-width: 380px) { .ornament::after { font-size: 14px; } }
-
-        .ornament-1 { background: linear-gradient(135deg, #1a1a1a, #333) !important; color: #ff4d4d !important; }
-        .ornament-1::after { content: "✥"; }
-
-        .ornament-2 { background: linear-gradient(135deg, #e09f1b, #f3b63a) !important; color: #1e5230 !important; }
-        .ornament-2::after { content: "✺"; }
-
-        .ornament-3 { background: linear-gradient(135deg, #cc2323, #a01616) !important; color: #ffd700 !important; }
-        .ornament-3::after { content: "✤"; }
-
-        .ornament-4 { background: linear-gradient(135deg, #2a6f43, #3c925c) !important; color: #ffffff !important; }
-        .ornament-4::after { content: "✣"; }
-
-        .ornament-5 { background: linear-gradient(135deg, #0d3b66, #1a5b99) !important; color: #f4d35e !important; }
-        .ornament-5::after { content: "✸"; }
-
-        .ornament-6 { background: linear-gradient(135deg, #faf0ca, #fcebb6) !important; color: #d62828 !important; }
-        .ornament-6::after { content: "✿"; }
-
-        /* Магніт-підсвітка */
-        .cell.hovered {
-            background-color: rgba(204, 35, 35, 0.3) !important;
-            box-shadow: inset 0 0 6px var(--ethno-red) !important;
-        }
+        .cell.hovered { background-image: linear-gradient(rgba(204, 35, 35, 0.2), rgba(204, 35, 35, 0.2)) !important; box-shadow: inset 0 0 6px var(--ethno-red) !important; }
         .cell.hovered::after { content: "" !important; }
 
-        /* Кошик фігур */
-        .rack {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            min-height: 95px;
-        }
-
+        .rack { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; min-height: 95px; }
         .rack-slot {
-            background: var(--fabric-color) !important;
-            border-radius: 16px;
-            height: 95px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05), 0 2px 6px var(--shadow);
+            background-image: linear-gradient(var(--fabric-color), var(--fabric-color)) !important;
+            border-radius: 16px; height: 95px;
+            display: flex; align-items: center; justify-content: center;
             border: 1px dashed #ccc;
         }
 
-        .draggable-piece {
-            display: grid;
-            gap: 3px;
-        }
-
-        /* Стиль коли фігуру затиснули і тягнуть */
+        .draggable-piece { display: grid; gap: 3px; position: relative; }
+        
         .draggable-piece.dragging {
             position: fixed !important;
             z-index: 9999 !important;
-            pointer-events: none; /* Важливо: палець «дивиться» крізь фігуру на клітинки поля */
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+            pointer-events: none; /* Щоб бачити поле крізь фігуру */
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.4));
         }
 
-        .p-cell {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .p-cell { display: flex; align-items: center; justify-content: center; }
 
-        /* Салют зі збирання ліній */
-        .vyshyvanka-reward-overlay {
-            position: absolute;
-            top: 70px; left: 0; right: 0; bottom: 110px;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            pointer-events: none; z-index: 500;
-            opacity: 0; transform: scale(0.7);
-            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .vyshyvanka-reward-overlay.show { opacity: 1; transform: scale(1); }
-
-        .reward-card {
-            background: #ffffff !important;
-            border: 4px double var(--ethno-red);
-            padding: 15px; border-radius: 24px;
-            box-shadow: 0 15px 40px rgba(214, 40, 40, 0.35);
-            text-align: center; max-width: 260px;
-        }
-        .reward-card svg { width: 100px; height: 100px; }
-        .reward-title { font-weight: 900; color: #1a1a1a; margin-top: 8px; text-transform: uppercase; font-size: 14px; }
-        .reward-region { color: var(--ethno-red); font-size: 12px; font-weight: bold; }
-
-        .clearing { animation: clearAnimate 0.3s ease-out forwards !important; }
-        @keyframes clearAnimate { 0% { transform: scale(1); filter: brightness(1.8); } 100% { transform: scale(0); opacity: 0; } }
+        .clearing { animation: clearAnim 0.3s forwards !important; }
+        @keyframes clearAnim { 100% { transform: scale(0); opacity: 0; } }
 
         .overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.8); z-index: 10000;
             display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 10000;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
         .overlay.active { opacity: 1; pointer-events: auto; }
-        .modal { background: #fff !important; padding: 25px; border-radius: 24px; text-align: center; max-width: 300px; width: 90%; border: 3px solid var(--ethno-red); }
-        .btn { background: #1a1a1a; color: #fff; border: none; padding: 12px 28px; font-size: 15px; font-weight: bold; border-radius: 25px; }
+        .modal { background-image: linear-gradient(#fff, #fff) !important; padding: 25px; border-radius: 24px; text-align: center; border: 3px solid var(--ethno-red); width: 90%; max-width: 300px; }
+        .modal h2 { color: #1a1a1a !important; margin-bottom: 10px; }
+        .btn { background: #1a1a1a; color: #fff; border: none; padding: 12px 28px; font-size: 16px; font-weight: bold; border-radius: 25px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="game-container">
-    <div id="vyshyvanka-reward" class="vyshyvanka-reward-overlay">
-        <div class="reward-card">
-            <svg viewBox="0 0 100 100">
-                <path d="M30 25 L40 10 L60 10 L70 25 L85 30 L80 50 L70 48 L70 90 L30 90 L30 48 L20 50 L15 30 Z" fill="#fcfaf2" stroke="#1a1a1a" stroke-width="2"/>
-                <path d="M40 10 L50 25 L60 10" fill="none" stroke="#cc2323" stroke-width="3" stroke-dasharray="2,1"/>
-                <rect x="44" y="25" width="12" height="30" fill="#cc2323"/>
-                <path d="M20 33 L28 35 M72 35 L80 33" stroke="#cc2323" stroke-width="4"/>
-                <path d="M30 86 L70 86" stroke="#cc2323" stroke-width="3" stroke-dasharray="3,1"/>
-            </svg>
-            <div class="reward-title">Красиво вишито!</div>
-            <div id="reward-region-name" class="reward-region">Подільський узор</div>
-        </div>
-    </div>
+<div class="bg-pattern"></div>
 
+<div class="game-wrapper">
     <header>
         <div class="title-area">
             <h1>Етно Бласт</h1>
@@ -294,7 +177,7 @@
         </div>
     </header>
 
-    <div class="board-wrapper">
+    <div class="board-container">
         <div id="board" class="board"></div>
     </div>
 
@@ -308,11 +191,11 @@
 <div id="game-over-modal" class="overlay">
     <div class="modal">
         <h2>Нитка закінчилась!</h2>
-        <p style="margin-bottom: 15px; color:#1a1a1a;">Ваш орнамент заповнив усе полотно.</p>
-        <div style="font-size: 14px; margin-bottom: 20px; color:#1a1a1a;">
-            Рахунок: <strong id="final-score" style="color: var(--ethno-red); font-size: 22px;">0</strong>
+        <p style="color:#1a1a1a !important; margin-bottom: 15px;">Більше немає куди покласти орнамент.</p>
+        <div style="font-size: 16px; margin-bottom: 20px; color:#1a1a1a !important;">
+            Рахунок: <strong id="final-score" style="color: #cc2323 !important; font-size: 24px;">0</strong>
         </div>
-        <button id="restart-btn" class="btn">Почати заново</button>
+        <button id="restart-btn" class="btn">Грати ще раз</button>
     </div>
 </div>
 
@@ -324,16 +207,11 @@
     const highScoreEl = document.getElementById('high-score');
     const finalScoreEl = document.getElementById('final-score');
     const gameOverModal = document.getElementById('game-over-modal');
-    const restartBtn = document.getElementById('restart-btn');
-    const rewardOverlay = document.getElementById('vyshyvanka-reward');
-    const rewardRegionName = document.getElementById('reward-region-name');
 
     let board = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(0));
     let score = 0;
-    let highScore = localStorage.getItem('vyshyvanka_blast_high') || 0;
+    let highScore = localStorage.getItem('vyshyvanka_blast_max') || 0;
     highScoreEl.textContent = highScore;
-
-    const REGIONS = ["Борщівський узор", "Гуцульський узор", "Подільський орнамент", "Поліська вишивка", "Київська гладь", "Буковинські квіти"];
 
     const SHAPES = [
         { matrix: [[1]], style: 'ornament-1' },
@@ -349,13 +227,14 @@
     ];
 
     let rackPieces = [null, null, null];
+    let activePieceEl = null; // Поточна фігура, яку ми тягнемо
 
     function createBoard() {
         boardEl.innerHTML = '';
         for (let r = 0; r < BOARD_SIZE; r++) {
             for (let c = 0; c < BOARD_SIZE; c++) {
                 const cell = document.createElement('div');
-                cell.classList.add('cell');
+                cell.className = 'cell';
                 cell.dataset.row = r;
                 cell.dataset.col = c;
                 boardEl.appendChild(cell);
@@ -375,27 +254,27 @@
         });
     }
 
-    function generatePieceInSlot(slotIndex) {
-        const baseShape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-        const piece = { matrix: baseShape.matrix, style: baseShape.style };
+    function generatePiece(slotIndex) {
+        const base = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+        const piece = { matrix: base.matrix, style: base.style };
         rackPieces[slotIndex] = piece;
 
         const slot = rackSlots[slotIndex];
         slot.innerHTML = '';
 
         const pieceEl = document.createElement('div');
-        pieceEl.classList.add('draggable-piece');
+        pieceEl.className = 'draggable-piece';
         pieceEl.dataset.slot = slotIndex;
         pieceEl.style.gridTemplateRows = `repeat(${piece.matrix.length}, 1fr)`;
         pieceEl.style.gridTemplateColumns = `repeat(${piece.matrix[0].length}, 1fr)`;
 
-        const size = 20;
+        const size = 22;
         pieceEl.style.width = `${piece.matrix[0].length * (size + 3)}px`;
 
         for (let r = 0; r < piece.matrix.length; r++) {
             for (let c = 0; c < piece.matrix[r].length; c++) {
                 const pCell = document.createElement('div');
-                pCell.classList.add('p-cell');
+                pCell.className = 'p-cell';
                 if (piece.matrix[r][c] === 1) {
                     pCell.classList.add('ornament', piece.style);
                     pCell.style.width = `${size}px`;
@@ -408,205 +287,198 @@
         }
 
         slot.appendChild(pieceEl);
-        initDragAndDrop(pieceEl);
+        initDrag(pieceEl, piece);
     }
 
     function fillRack() {
-        for (let i = 0; i < 3; i++) generatePieceInSlot(i);
+        for (let i = 0; i < 3; i++) generatePiece(i);
     }
 
-    // --- НАДІЙНИЙ НОВИЙ СУПЕР-ДРАГ ДЛЯ ВСІХ ПРИСТРОЇВ ---
-    function initDragAndDrop(pieceEl) {
-        let slotIndex = parseInt(pieceEl.dataset.slot);
-        let piece = rackPieces[slotIndex];
-        
-        let touchShiftY = 65; // Підіймаємо блок трохи вище пальця на екрані
-        let centerOffsetX = 0;
-        let centerOffsetY = 0;
+    // --- НАДІЙНИЙ НОВИЙ КОД ПЕРЕТЯГУВАННЯ ---
+    let dragData = null;
 
+    function initDrag(pieceEl, piece) {
         pieceEl.addEventListener('pointerdown', (e) => {
             e.preventDefault();
-            pieceEl.setPointerCapture(e.pointerId);
+            activePieceEl = pieceEl;
             
-            // Робимо блок точного розміру ігрових клітинок поля
             const boardCell = boardEl.querySelector('.cell').getBoundingClientRect();
+            
+            // Збільшуємо фігуру до розміру поля
             pieceEl.querySelectorAll('.p-cell').forEach(c => {
                 c.style.width = `${boardCell.width}px`;
                 c.style.height = `${boardCell.height}px`;
             });
             pieceEl.style.width = `${piece.matrix[0].length * boardCell.width + (piece.matrix[0].length - 1) * 4}px`;
 
-            // Вираховуємо центр фігури для гарного центрування під пальцем
             const rect = pieceEl.getBoundingClientRect();
-            centerOffsetX = rect.width / 2;
-            centerOffsetY = rect.height / 2;
+            dragData = {
+                piece: piece,
+                slotIndex: parseInt(pieceEl.dataset.slot),
+                offsetX: rect.width / 2,
+                offsetY: rect.height / 2,
+                shiftY: 60 // Підіймаємо над пальцем
+            };
 
             pieceEl.classList.add('dragging');
+            movePiece(e.clientX, e.clientY);
 
-            updatePosition(e.clientX, e.clientY);
-
-            pieceEl.addEventListener('pointermove', onPointerMove);
-            pieceEl.addEventListener('pointerup', onPointerUp);
+            // ВАЖЛИВО: вішаємо слухачі руху на ВЕСЬ документ, а не на фігуру!
+            document.addEventListener('pointermove', onPointerMove, { passive: false });
+            document.addEventListener('pointerup', onPointerUp);
+            document.addEventListener('pointercancel', onPointerUp);
         });
+    }
 
-        function onPointerMove(e) {
-            updatePosition(e.clientX, e.clientY);
-        }
+    function onPointerMove(e) {
+        if (!activePieceEl) return;
+        e.preventDefault(); // Зупиняє прокрутку екрану на телефонах
+        movePiece(e.clientX, e.clientY);
+    }
 
-        function updatePosition(clientX, clientY) {
-            // Встановлюємо координати: палець по центру + зміщення вгору
-            let targetX = clientX - centerOffsetX;
-            let targetY = clientY - centerOffsetY - touchShiftY;
+    function movePiece(clientX, clientY) {
+        if (!activePieceEl || !dragData) return;
 
-            pieceEl.style.left = `${targetX}px`;
-            pieceEl.style.top = `${targetY}px`;
+        // Рухаємо фігуру за пальцем
+        activePieceEl.style.left = `${clientX - dragData.offsetX}px`;
+        activePieceEl.style.top = `${clientY - dragData.offsetY - dragData.shiftY}px`;
 
-            clearHoveredCells();
+        clearHover();
 
-            // Знаходимо клітинку під ПЕРШИМ (лівим верхнім) кубиком нашої фігури
-            const firstCellRect = pieceEl.querySelector('.ornament').getBoundingClientRect();
-            const checkX = firstCellRect.left + firstCellRect.width / 2;
-            const checkY = firstCellRect.top + firstCellRect.height / 2;
+        // Шукаємо клітинку під ПЕРШИМ квадратиком фігури
+        const firstBlock = activePieceEl.querySelector('.ornament');
+        if (firstBlock) {
+            const rect = firstBlock.getBoundingClientRect();
+            const checkX = rect.left + rect.width / 2;
+            const checkY = rect.top + rect.height / 2;
 
-            const hoveredGridCell = document.elementFromPoint(checkX, checkY);
-            if (hoveredGridCell && hoveredGridCell.classList.contains('cell')) {
-                const r = parseInt(hoveredGridCell.dataset.row);
-                const c = parseInt(hoveredGridCell.dataset.col);
-                if (canPlacePiece(piece.matrix, r, c)) {
-                    highlightCells(piece.matrix, r, c);
+            // Оскільки у фігури pointer-events: none, ми бачимо клітинку під нею
+            const elem = document.elementFromPoint(checkX, checkY);
+            if (elem && elem.classList.contains('cell')) {
+                const r = parseInt(elem.dataset.row);
+                const c = parseInt(elem.dataset.col);
+                if (canPlace(dragData.piece.matrix, r, c)) {
+                    showHover(dragData.piece.matrix, r, c);
                 }
-            }
-        }
-
-        function onPointerUp(e) {
-            pieceEl.removeEventListener('pointermove', onPointerMove);
-            pieceEl.removeEventListener('pointerup', onPointerUp);
-            pieceEl.classList.remove('dragging');
-
-            clearHoveredCells();
-
-            const firstCell = pieceEl.querySelector('.ornament');
-            let placed = false;
-
-            if (firstCell) {
-                const firstCellRect = firstCell.getBoundingClientRect();
-                const checkX = firstCellRect.left + firstCellRect.width / 2;
-                const checkY = firstCellRect.top + firstCellRect.height / 2;
-
-                const targetGridCell = document.elementFromPoint(checkX, checkY);
-                if (targetGridCell && targetGridCell.classList.contains('cell')) {
-                    const r = parseInt(targetGridCell.dataset.row);
-                    const c = parseInt(targetGridCell.dataset.col);
-                    if (canPlacePiece(piece.matrix, r, c)) {
-                        placePiece(piece.matrix, piece.style, r, c);
-                        pieceEl.remove();
-                        rackPieces[slotIndex] = null;
-                        placed = true;
-
-                        checkLines();
-                        if (rackPieces.every(p => p === null)) fillRack();
-                        if (!hasAvailableMoves()) triggerGameOver();
-                    }
-                }
-            }
-
-            // Якщо не потрапили на поле — повертаємо красиву маленьку фігуру назад у кошик
-            if (!placed) {
-                pieceEl.style.position = 'static';
-                pieceEl.style.left = 'auto';
-                pieceEl.style.top = 'auto';
-                const size = 20;
-                pieceEl.querySelectorAll('.p-cell').forEach(c => {
-                    c.style.width = `${size}px`;
-                    c.style.height = `${size}px`;
-                });
-                pieceEl.style.width = `${piece.matrix[0].length * (size + 3)}px`;
             }
         }
     }
 
-    function canPlacePiece(matrix, startRow, startCol) {
+    function onPointerUp(e) {
+        if (!activePieceEl) return;
+
+        // Знімаємо глобальні слухачі
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+        document.removeEventListener('pointercancel', onPointerUp);
+
+        activePieceEl.classList.remove('dragging');
+        clearHover();
+
+        let placed = false;
+        const firstBlock = activePieceEl.querySelector('.ornament');
+
+        if (firstBlock) {
+            const rect = firstBlock.getBoundingClientRect();
+            const checkX = rect.left + rect.width / 2;
+            const checkY = rect.top + rect.height / 2;
+
+            const elem = document.elementFromPoint(checkX, checkY);
+            if (elem && elem.classList.contains('cell')) {
+                const r = parseInt(elem.dataset.row);
+                const c = parseInt(elem.dataset.col);
+                if (canPlace(dragData.piece.matrix, r, c)) {
+                    place(dragData.piece.matrix, dragData.piece.style, r, c);
+                    activePieceEl.remove();
+                    rackPieces[dragData.slotIndex] = null;
+                    placed = true;
+
+                    checkLines();
+                    if (rackPieces.every(p => p === null)) fillRack();
+                    if (!canMoveAny()) triggerGameOver();
+                }
+            }
+        }
+
+        // Якщо не поставили на поле — повертаємо розмір і кладемо назад
+        if (!placed) {
+            activePieceEl.style.position = '';
+            activePieceEl.style.left = '';
+            activePieceEl.style.top = '';
+            const size = 22;
+            activePieceEl.querySelectorAll('.p-cell').forEach(c => {
+                c.style.width = `${size}px`;
+                c.style.height = `${size}px`;
+            });
+            activePieceEl.style.width = `${dragData.piece.matrix[0].length * (size + 3)}px`;
+        }
+
+        activePieceEl = null;
+        dragData = null;
+    }
+
+    function canPlace(matrix, sR, sC) {
         for (let r = 0; r < matrix.length; r++) {
             for (let c = 0; c < matrix[r].length; c++) {
                 if (matrix[r][c] === 1) {
-                    const tRow = startRow + r;
-                    const tCol = startCol + c;
-                    if (tRow >= BOARD_SIZE || tCol >= BOARD_SIZE || board[tRow][tCol] !== 0) return false;
+                    let tr = sR + r, tc = sC + c;
+                    if (tr >= BOARD_SIZE || tc >= BOARD_SIZE || board[tr][tc] !== 0) return false;
                 }
             }
         }
         return true;
     }
 
-    function highlightCells(matrix, startRow, startCol) {
+    function showHover(matrix, sR, sC) {
         for (let r = 0; r < matrix.length; r++) {
             for (let c = 0; c < matrix[r].length; c++) {
                 if (matrix[r][c] === 1) {
-                    const cell = boardEl.querySelector(`[data-row="${startRow + r}"][data-col="${startCol + c}"]`);
+                    let cell = boardEl.querySelector(`[data-row="${sR + r}"][data-col="${sC + c}"]`);
                     if (cell) cell.classList.add('hovered');
                 }
             }
         }
     }
 
-    function clearHoveredCells() {
-        boardEl.querySelectorAll('.cell.hovered').forEach(c => c.classList.remove('hovered'));
+    function clearHover() {
+        boardEl.querySelectorAll('.hovered').forEach(c => c.classList.remove('hovered'));
     }
 
-    function placePiece(matrix, style, startRow, startCol) {
-        let count = 0;
+    function place(matrix, style, sR, sC) {
+        let pts = 0;
         for (let r = 0; r < matrix.length; r++) {
             for (let c = 0; c < matrix[r].length; c++) {
                 if (matrix[r][c] === 1) {
-                    board[startRow + r][startCol + c] = style;
-                    count++;
+                    board[sR + r][sC + c] = style;
+                    pts++;
                 }
             }
         }
-        addScore(count);
+        addScore(pts);
         drawBoard();
     }
 
     function checkLines() {
-        let rows = [];
-        let cols = [];
-
-        for (let r = 0; r < BOARD_SIZE; r++) {
-            if (board[r].every(cell => cell !== 0)) rows.push(r);
-        }
-
+        let rows = [], cols = [];
+        for (let r = 0; r < BOARD_SIZE; r++) { if (board[r].every(x => x !== 0)) rows.push(r); }
         for (let c = 0; c < BOARD_SIZE; c++) {
             let full = true;
-            for (let r = 0; r < BOARD_SIZE; r++) {
-                if (board[r][c] === 0) { full = false; break; }
-            }
+            for (let r = 0; r < BOARD_SIZE; r++) { if (board[r][c] === 0) full = false; }
             if (full) cols.push(c);
         }
 
         if (rows.length > 0 || cols.length > 0) {
-            rows.forEach(r => {
-                for (let c = 0; c < BOARD_SIZE; c++) boardEl.querySelector(`[data-row="${r}"][data-col="${c}"]`).classList.add('clearing');
-            });
-            cols.forEach(c => {
-                for (let r = 0; r < BOARD_SIZE; r++) boardEl.querySelector(`[data-row="${r}"][data-col="${c}"]`).classList.add('clearing');
-            });
+            rows.forEach(r => { for (let c=0; c<BOARD_SIZE; c++) boardEl.querySelector(`[data-row="${r}"][data-col="${c}"]`).classList.add('clearing'); });
+            cols.forEach(c => { for (let r=0; r<BOARD_SIZE; r++) boardEl.querySelector(`[data-row="${r}"][data-col="${c}"]`).classList.add('clearing'); });
 
             addScore((rows.length + cols.length) * 100);
-            showVyshyvankaCelebration();
 
             setTimeout(() => {
-                rows.forEach(r => { for (let c = 0; c < BOARD_SIZE; c++) board[r][c] = 0; });
-                cols.forEach(c => { for (let r = 0; r < BOARD_SIZE; r++) board[r][c] = 0; });
+                rows.forEach(r => { for (let c=0; c<BOARD_SIZE; c++) board[r][c] = 0; });
+                cols.forEach(c => { for (let r=0; r<BOARD_SIZE; r++) board[r][c] = 0; });
                 drawBoard();
             }, 300);
         }
-    }
-
-    function showVyshyvankaCelebration() {
-        const randomRegion = REGIONS[Math.floor(Math.random() * REGIONS.length)];
-        rewardRegionName.textContent = randomRegion;
-        rewardOverlay.classList.add('show');
-        setTimeout(() => { rewardOverlay.classList.remove('show'); }, 1500);
     }
 
     function addScore(p) {
@@ -615,16 +487,16 @@
         if (score > highScore) {
             highScore = score;
             highScoreEl.textContent = highScore;
-            localStorage.setItem('vyshyvanka_blast_high', highScore);
+            localStorage.setItem('vyshyvanka_blast_max', highScore);
         }
     }
 
-    function hasAvailableMoves() {
+    function canMoveAny() {
         return rackPieces.some(piece => {
             if (!piece) return false;
             for (let r = 0; r < BOARD_SIZE; r++) {
                 for (let c = 0; c < BOARD_SIZE; c++) {
-                    if (canPlacePiece(piece.matrix, r, c)) return true;
+                    if (canPlace(piece.matrix, r, c)) return true;
                 }
             }
             return false;
@@ -636,16 +508,15 @@
         gameOverModal.classList.add('active');
     }
 
-    function restartGame() {
+    document.getElementById('restart-btn').addEventListener('click', () => {
         board = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(0));
         score = 0;
         scoreEl.textContent = '0';
         gameOverModal.classList.remove('active');
         createBoard();
         fillRack();
-    }
+    });
 
-    restartBtn.addEventListener('click', restartGame);
     createBoard();
     fillRack();
 </script>
