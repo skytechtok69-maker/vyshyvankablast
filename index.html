@@ -3,18 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Вишиванковий Бласт 3.1 (Мобільна оптимізація)</title>
+    <!-- Захист від примусового темного режиму в телефонах -->
+    <meta name="color-scheme" content="light">
+    <title>Етно Бласт 3.2 (Повне виправлення)</title>
     <style>
         :root {
-            --bg-linen: #f5f2eb;
-            --fabric-color: #fefdfb;
-            --ethno-red: #cc2323;
-            --ethno-black: #1a1a1a;
-            --ethno-gold: #e09f1b;
-            --ethno-green: #2a6f43;
-            --ethno-blue: #0d3b66;
-            --grid-line: #e3dac9;
-            --shadow: rgba(40, 30, 20, 0.12);
+            --bg-linen: #f5f2eb !important;
+            --fabric-color: #fefdfb !important;
+            --ethno-red: #cc2323 !important;
+            --ethno-black: #1a1a1a !important;
+            --ethno-gold: #e09f1b !important;
+            --ethno-green: #2a6f43 !important;
+            --ethno-blue: #0d3b66 !important;
+            --grid-line: #e3dac9 !important;
+            --shadow: rgba(40, 30, 20, 0.12) !important;
+        }
+
+        /* Жорстке блокування інверсії кольорів на мобілках */
+        @media (prefers-color-scheme: dark) {
+            body, html, .game-container, .board-wrapper, .cell, .rack-slot {
+                background-color: transparent;
+                color: #1a1a1a;
+            }
         }
 
         * {
@@ -23,13 +33,13 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: none; /* Повністю блокує випадковий скрол екрану під час гри */
+            touch-action: none;
         }
 
         body {
             font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-linen);
-            background-image: radial-gradient(var(--grid-line) 1.5px, transparent 1.5px);
+            background-color: var(--bg-linen) !important;
+            background-image: radial-gradient(var(--grid-line) 1.5px, transparent 1.5px) !important;
             background-size: 24px 24px;
             color: var(--ethno-black);
             display: flex;
@@ -38,7 +48,7 @@
             justify-content: flex-start;
             min-height: 100vh;
             padding: 10px;
-            overflow: hidden; /* Запобігає смиканню сторінки на iOS */
+            overflow: hidden;
         }
 
         .game-container {
@@ -54,7 +64,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--fabric-color);
+            background: var(--fabric-color) !important;
             padding: 12px 16px;
             border-radius: 16px;
             box-shadow: 0 4px 15px var(--shadow);
@@ -67,6 +77,7 @@
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: var(--ethno-black);
         }
 
         .title-area span {
@@ -75,31 +86,15 @@
             font-weight: bold;
         }
 
-        .stats {
-            display: flex;
-            gap: 12px;
-        }
-
-        .stat-box {
-            text-align: right;
-        }
-
-        .stat-label {
-            font-size: 9px;
-            text-transform: uppercase;
-            color: #777;
-            font-weight: bold;
-        }
-
-        .stat-val {
-            font-size: 20px;
-            font-weight: 800;
-        }
-        #score { color: var(--ethno-red); }
+        .stats { display: flex; gap: 12px; }
+        .stat-box { text-align: right; }
+        .stat-label { font-size: 9px; text-transform: uppercase; color: #777; font-weight: bold; }
+        .stat-val { font-size: 20px; font-weight: 800; color: var(--ethno-black); }
+        #score { color: var(--ethno-red) !important; }
 
         /* Ігрове поле */
         .board-wrapper {
-            background: var(--fabric-color);
+            background: var(--fabric-color) !important;
             padding: 8px;
             border-radius: 20px;
             box-shadow: 0 8px 24px var(--shadow);
@@ -113,13 +108,13 @@
             gap: 4px;
             width: 100%;
             aspect-ratio: 1;
-            background-color: var(--grid-line);
+            background-color: var(--grid-line) !important;
             border-radius: 12px;
             padding: 4px;
         }
 
         .cell {
-            background-color: var(--fabric-color);
+            background-color: var(--fabric-color) !important;
             border-radius: 6px;
             position: relative;
             display: flex;
@@ -129,13 +124,12 @@
 
         .cell::after {
             content: "·";
-            color: #d0c8b8;
+            color: #d0c8b8 !important;
             font-size: 16px;
         }
-        
-        .cell.filled::after { content: ""; }
+        .cell.filled::after { content: "" !important; }
 
-        /* ОРНАМЕНТИ */
+        /* КУБИКИ ОРНАМЕНТІВ */
         .ornament {
             position: relative;
             display: flex;
@@ -152,13 +146,7 @@
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-image: repeating-linear-gradient(
-                45deg, 
-                rgba(255,255,255,0.08) 0px, 
-                rgba(255,255,255,0.08) 1px, 
-                transparent 1px, 
-                transparent 3px
-            );
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 1px, transparent 1px, transparent 3px);
             z-index: 1;
         }
 
@@ -167,38 +155,37 @@
             z-index: 2;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
             font-size: 18px;
+            font-weight: normal;
         }
 
-        @media(max-width: 380px) {
-            .ornament::after { font-size: 14px; }
-        }
+        @media(max-width: 380px) { .ornament::after { font-size: 14px; } }
 
-        .ornament-1 { background: linear-gradient(135deg, #1a1a1a, #333); color: #ff4d4d; }
+        .ornament-1 { background: linear-gradient(135deg, #1a1a1a, #333) !important; color: #ff4d4d !important; }
         .ornament-1::after { content: "✥"; }
 
-        .ornament-2 { background: linear-gradient(135deg, #e09f1b, #f3b63a); color: #1e5230; }
+        .ornament-2 { background: linear-gradient(135deg, #e09f1b, #f3b63a) !important; color: #1e5230 !important; }
         .ornament-2::after { content: "✺"; }
 
-        .ornament-3 { background: linear-gradient(135deg, #cc2323, #a01616); color: #ffd700; }
+        .ornament-3 { background: linear-gradient(135deg, #cc2323, #a01616) !important; color: #ffd700 !important; }
         .ornament-3::after { content: "✤"; }
 
-        .ornament-4 { background: linear-gradient(135deg, #2a6f43, #3c925c); color: #ffffff; }
+        .ornament-4 { background: linear-gradient(135deg, #2a6f43, #3c925c) !important; color: #ffffff !important; }
         .ornament-4::after { content: "✣"; }
 
-        .ornament-5 { background: linear-gradient(135deg, #0d3b66, #1a5b99); color: #f4d35e; }
+        .ornament-5 { background: linear-gradient(135deg, #0d3b66, #1a5b99) !important; color: #f4d35e !important; }
         .ornament-5::after { content: "✸"; }
 
-        .ornament-6 { background: linear-gradient(135deg, #faf0ca, #fcebb6); color: #d62828; }
+        .ornament-6 { background: linear-gradient(135deg, #faf0ca, #fcebb6) !important; color: #d62828 !important; }
         .ornament-6::after { content: "✿"; }
 
-        /* Підсвітка клітинок */
+        /* Магніт-підсвітка */
         .cell.hovered {
             background-color: rgba(204, 35, 35, 0.3) !important;
-            box-shadow: inset 0 0 6px var(--ethno-red);
+            box-shadow: inset 0 0 6px var(--ethno-red) !important;
         }
-        .cell.hovered::after { content: ""; }
+        .cell.hovered::after { content: "" !important; }
 
-        /* Слот фігур */
+        /* Кошик фігур */
         .rack {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -207,7 +194,7 @@
         }
 
         .rack-slot {
-            background: var(--fabric-color);
+            background: var(--fabric-color) !important;
             border-radius: 16px;
             height: 95px;
             display: flex;
@@ -220,11 +207,13 @@
         .draggable-piece {
             display: grid;
             gap: 3px;
-            cursor: grab;
         }
 
+        /* Стиль коли фігуру затиснули і тягнуть */
         .draggable-piece.dragging {
-            cursor: grabbing;
+            position: fixed !important;
+            z-index: 9999 !important;
+            pointer-events: none; /* Важливо: палець «дивиться» крізь фігуру на клітинки поля */
             filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
         }
 
@@ -234,7 +223,7 @@
             justify-content: center;
         }
 
-        /* СПЛИВАЮЧА ВИШИВАНКА */
+        /* Салют зі збирання ліній */
         .vyshyvanka-reward-overlay {
             position: absolute;
             top: 70px; left: 0; right: 0; bottom: 110px;
@@ -247,43 +236,28 @@
         .vyshyvanka-reward-overlay.show { opacity: 1; transform: scale(1); }
 
         .reward-card {
-            background: radial-gradient(circle, #ffffff 60%, #fffbf2 100%);
+            background: #ffffff !important;
             border: 4px double var(--ethno-red);
             padding: 15px; border-radius: 24px;
             box-shadow: 0 15px 40px rgba(214, 40, 40, 0.35);
             text-align: center; max-width: 260px;
-            animation: floatCard 1.5s ease-in-out infinite alternate;
         }
-
-        .reward-card svg { width: 100px; height: 100px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15)); }
-        .reward-title { font-weight: 900; color: var(--ethno-black); margin-top: 8px; text-transform: uppercase; font-size: 14px; }
+        .reward-card svg { width: 100px; height: 100px; }
+        .reward-title { font-weight: 900; color: #1a1a1a; margin-top: 8px; text-transform: uppercase; font-size: 14px; }
         .reward-region { color: var(--ethno-red); font-size: 12px; font-weight: bold; }
-
-        @keyframes floatCard { 0% { transform: translateY(0); } 100% { transform: translateY(-6px); } }
 
         .clearing { animation: clearAnimate 0.3s ease-out forwards !important; }
         @keyframes clearAnimate { 0% { transform: scale(1); filter: brightness(1.8); } 100% { transform: scale(0); opacity: 0; } }
 
-        /* Game Over Модалка */
         .overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
             display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 1000;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 10000;
         }
         .overlay.active { opacity: 1; pointer-events: auto; }
-
-        .modal {
-            background: var(--fabric-color); padding: 25px; border-radius: 24px;
-            text-align: center; max-width: 300px; width: 90%; border: 3px solid var(--ethno-red);
-        }
-        .modal h2 { color: var(--ethno-red); margin-bottom: 10px; text-transform: uppercase; font-size: 20px; }
-        
-        .btn {
-            background: var(--ethno-black); color: #fff; border: none; padding: 12px 28px;
-            font-size: 15px; font-weight: bold; border-radius: 25px; cursor: pointer;
-            text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
+        .modal { background: #fff !important; padding: 25px; border-radius: 24px; text-align: center; max-width: 300px; width: 90%; border: 3px solid var(--ethno-red); }
+        .btn { background: #1a1a1a; color: #fff; border: none; padding: 12px 28px; font-size: 15px; font-weight: bold; border-radius: 25px; }
     </style>
 </head>
 <body>
@@ -294,8 +268,7 @@
             <svg viewBox="0 0 100 100">
                 <path d="M30 25 L40 10 L60 10 L70 25 L85 30 L80 50 L70 48 L70 90 L30 90 L30 48 L20 50 L15 30 Z" fill="#fcfaf2" stroke="#1a1a1a" stroke-width="2"/>
                 <path d="M40 10 L50 25 L60 10" fill="none" stroke="#cc2323" stroke-width="3" stroke-dasharray="2,1"/>
-                <rect x="44" y="25" width="12" height="30" fill="#cc2323" opacity="0.8"/>
-                <line x1="50" y1="25" x2="50" y2="55" stroke="#1a1a1a" stroke-width="2" stroke-dasharray="1,2"/>
+                <rect x="44" y="25" width="12" height="30" fill="#cc2323"/>
                 <path d="M20 33 L28 35 M72 35 L80 33" stroke="#cc2323" stroke-width="4"/>
                 <path d="M30 86 L70 86" stroke="#cc2323" stroke-width="3" stroke-dasharray="3,1"/>
             </svg>
@@ -335,8 +308,8 @@
 <div id="game-over-modal" class="overlay">
     <div class="modal">
         <h2>Нитка закінчилась!</h2>
-        <p style="margin-bottom: 15px;">Ваш орнамент заповнив усе полотно.</p>
-        <div style="font-size: 14px; margin-bottom: 20px;">
+        <p style="margin-bottom: 15px; color:#1a1a1a;">Ваш орнамент заповнив усе полотно.</p>
+        <div style="font-size: 14px; margin-bottom: 20px; color:#1a1a1a;">
             Рахунок: <strong id="final-score" style="color: var(--ethno-red); font-size: 22px;">0</strong>
         </div>
         <button id="restart-btn" class="btn">Почати заново</button>
@@ -358,13 +331,9 @@
     let board = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(0));
     let score = 0;
     let highScore = localStorage.getItem('vyshyvanka_blast_high') || 0;
-    let touchOffsetY = 0; // Змінна для точного фіксування зміщення на телефонах
     highScoreEl.textContent = highScore;
 
-    const REGIONS = [
-        "Борщівський узор", "Гуцульський узор", "Подільський орнамент", 
-        "Поліська вишивка", "Київська гладь", "Буковинські квіти"
-    ];
+    const REGIONS = ["Борщівський узор", "Гуцульський узор", "Подільський орнамент", "Поліська вишивка", "Київська гладь", "Буковинські квіти"];
 
     const SHAPES = [
         { matrix: [[1]], style: 'ornament-1' },
@@ -446,29 +415,20 @@
         for (let i = 0; i < 3; i++) generatePieceInSlot(i);
     }
 
-    // --- НАДІЙНИЙ ДРАГ-ЕНД-ДРОП ДЛЯ МОБІЛОК ТА ПК ---
+    // --- НАДІЙНИЙ НОВИЙ СУПЕР-ДРАГ ДЛЯ ВСІХ ПРИСТРОЇВ ---
     function initDragAndDrop(pieceEl) {
         let slotIndex = parseInt(pieceEl.dataset.slot);
         let piece = rackPieces[slotIndex];
-        let startX = 0, startY = 0;
+        
+        let touchShiftY = 65; // Підіймаємо блок трохи вище пальця на екрані
+        let centerOffsetX = 0;
+        let centerOffsetY = 0;
 
         pieceEl.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             pieceEl.setPointerCapture(e.pointerId);
-            pieceEl.classList.add('dragging');
-
-            const rect = pieceEl.getBoundingClientRect();
             
-            // На телефонах підіймаємо узор на 60px вище пальця, щоб його було видно
-            touchOffsetY = (e.pointerType === 'touch' || e.pointerType === 'pen') ? 60 : 0;
-            
-            startX = e.clientX - rect.left;
-            startY = e.clientY - rect.top + touchOffsetY;
-
-            pieceEl.style.position = 'fixed';
-            pieceEl.style.gap = '4px'; // перемикаємо на зазори ігрового поля
-            
-            // Робимо кубики фігури точнісінько такими ж за розміром, як на полі
+            // Робимо блок точного розміру ігрових клітинок поля
             const boardCell = boardEl.querySelector('.cell').getBoundingClientRect();
             pieceEl.querySelectorAll('.p-cell').forEach(c => {
                 c.style.width = `${boardCell.width}px`;
@@ -476,23 +436,47 @@
             });
             pieceEl.style.width = `${piece.matrix[0].length * boardCell.width + (piece.matrix[0].length - 1) * 4}px`;
 
-            movePiece(e.clientX, e.clientY);
+            // Вираховуємо центр фігури для гарного центрування під пальцем
+            const rect = pieceEl.getBoundingClientRect();
+            centerOffsetX = rect.width / 2;
+            centerOffsetY = rect.height / 2;
+
+            pieceEl.classList.add('dragging');
+
+            updatePosition(e.clientX, e.clientY);
+
             pieceEl.addEventListener('pointermove', onPointerMove);
             pieceEl.addEventListener('pointerup', onPointerUp);
         });
 
-        function movePiece(clientX, clientY) {
-            pieceEl.style.left = `${clientX - startX}px`;
-            pieceEl.style.top = `${clientY - startY}px`;
-
-            clearHoveredCells();
-            const gridPos = getCalculatedGridPosition();
-            if (gridPos && canPlacePiece(piece.matrix, gridPos.row, gridPos.col)) {
-                highlightCells(piece.matrix, gridPos.row, gridPos.col);
-            }
+        function onPointerMove(e) {
+            updatePosition(e.clientX, e.clientY);
         }
 
-        function onPointerMove(e) { movePiece(e.clientX, e.clientY); }
+        function updatePosition(clientX, clientY) {
+            // Встановлюємо координати: палець по центру + зміщення вгору
+            let targetX = clientX - centerOffsetX;
+            let targetY = clientY - centerOffsetY - touchShiftY;
+
+            pieceEl.style.left = `${targetX}px`;
+            pieceEl.style.top = `${targetY}px`;
+
+            clearHoveredCells();
+
+            // Знаходимо клітинку під ПЕРШИМ (лівим верхнім) кубиком нашої фігури
+            const firstCellRect = pieceEl.querySelector('.ornament').getBoundingClientRect();
+            const checkX = firstCellRect.left + firstCellRect.width / 2;
+            const checkY = firstCellRect.top + firstCellRect.height / 2;
+
+            const hoveredGridCell = document.elementFromPoint(checkX, checkY);
+            if (hoveredGridCell && hoveredGridCell.classList.contains('cell')) {
+                const r = parseInt(hoveredGridCell.dataset.row);
+                const c = parseInt(hoveredGridCell.dataset.col);
+                if (canPlacePiece(piece.matrix, r, c)) {
+                    highlightCells(piece.matrix, r, c);
+                }
+            }
+        }
 
         function onPointerUp(e) {
             pieceEl.removeEventListener('pointermove', onPointerMove);
@@ -500,23 +484,37 @@
             pieceEl.classList.remove('dragging');
 
             clearHoveredCells();
-            const gridPos = getCalculatedGridPosition();
 
-            if (gridPos && canPlacePiece(piece.matrix, gridPos.row, gridPos.col)) {
-                placePiece(piece.matrix, piece.style, gridPos.row, gridPos.col);
-                pieceEl.remove();
-                rackPieces[slotIndex] = null;
+            const firstCell = pieceEl.querySelector('.ornament');
+            let placed = false;
 
-                checkLines();
+            if (firstCell) {
+                const firstCellRect = firstCell.getBoundingClientRect();
+                const checkX = firstCellRect.left + firstCellRect.width / 2;
+                const checkY = firstCellRect.top + firstCellRect.height / 2;
 
-                if (rackPieces.every(p => p === null)) fillRack();
-                if (!hasAvailableMoves()) triggerGameOver();
-            } else {
-                // Повернення у початковий кошик
+                const targetGridCell = document.elementFromPoint(checkX, checkY);
+                if (targetGridCell && targetGridCell.classList.contains('cell')) {
+                    const r = parseInt(targetGridCell.dataset.row);
+                    const c = parseInt(targetGridCell.dataset.col);
+                    if (canPlacePiece(piece.matrix, r, c)) {
+                        placePiece(piece.matrix, piece.style, r, c);
+                        pieceEl.remove();
+                        rackPieces[slotIndex] = null;
+                        placed = true;
+
+                        checkLines();
+                        if (rackPieces.every(p => p === null)) fillRack();
+                        if (!hasAvailableMoves()) triggerGameOver();
+                    }
+                }
+            }
+
+            // Якщо не потрапили на поле — повертаємо красиву маленьку фігуру назад у кошик
+            if (!placed) {
                 pieceEl.style.position = 'static';
                 pieceEl.style.left = 'auto';
                 pieceEl.style.top = 'auto';
-                pieceEl.style.gap = '3px';
                 const size = 20;
                 pieceEl.querySelectorAll('.p-cell').forEach(c => {
                     c.style.width = `${size}px`;
@@ -524,30 +522,6 @@
                 });
                 pieceEl.style.width = `${piece.matrix[0].length * (size + 3)}px`;
             }
-        }
-
-        // Завдяки математичній корекції на touchOffsetY, магніт більше ніколи не промахується!
-        function getCalculatedGridPosition() {
-            const boardRect = boardEl.getBoundingClientRect();
-            const pieceRect = pieceEl.getBoundingClientRect();
-
-            const cellWidth = boardRect.width / BOARD_SIZE;
-            const cellHeight = boardRect.height / BOARD_SIZE;
-
-            // Повертаємо координати узору до реального стану пальця на екрані
-            const correctedTop = pieceRect.top + touchOffsetY;
-
-            const relativeX = pieceRect.left - boardRect.left;
-            const relativeY = correctedTop - boardRect.top;
-
-            // Визначаємо індекси через округлення
-            const col = Math.round(relativeX / cellWidth);
-            const row = Math.round(relativeY / cellHeight);
-
-            if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
-                return { row, col };
-            }
-            return null;
         }
     }
 
